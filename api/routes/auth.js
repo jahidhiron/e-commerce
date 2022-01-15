@@ -2,7 +2,7 @@
 const router = require("express").Router();
 
 // internal imports
-const { addUser, login } = require("../controllers/userController");
+const { addUser, login } = require("../controllers/authController");
 
 // REGISTER
 router.post("/register", addUser);

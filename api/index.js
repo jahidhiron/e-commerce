@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 
 // internal imports
 const authRoute = require("./routes/auth");
+const userRoute = require("./routes/user");
 
 const app = express();
 
@@ -20,6 +21,7 @@ mongoose
 
 // route
 app.use("/api/auth", authRoute);
+app.use("/api/users", userRoute);
 
 app.listen(process.env.PORT || 8080, () =>
   console.log(`Backend server is running on port ${process.env.PORT}`)

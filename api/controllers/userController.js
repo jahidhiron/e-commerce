@@ -1,33 +1,29 @@
 // external imports
 const CryptoJS = require("crypto-js");
-const jwt = require("jsonwebtoken");
 
 // internal imports
 const User = require("../models/User");
 
-// REGISTER
-const addUser = async (req, res) => {
-  const { username, email, password } = req.body;
-  const newUser = new User({
-    username,
-    email,
-    password: CryptoJS.AES.encrypt(
-      password,
+// UPDATE
+const updateUser = async (req, res) => {
+  console.log(req.user);
+  if (req.body.password) {
+    req.body.password = CryptoJS.AES.encrypt(
+      req.body.password,
       process.env.PASSWORD_SECRET
-    ).toString(),
-  });
+    ).toString();
+  }
 
   try {
-    if (username && email && password) {
-      const user = await newUser.save();
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    );
 
-      const { password, ...info } = user._doc;
-      res.status(201).json(info);
-    } else {
-      res.status(400).json({
-        message: `Set username, email & password to register`,
-      });
-    }
+    res.status(200).json(updatedUser);
   } catch (err) {
     res.status(500).json({
       message: `Internal server error: ${err}`,
@@ -35,38 +31,78 @@ const addUser = async (req, res) => {
   }
 };
 
-// LOGIN
-const login = async (req, res) => {
+// DELETE
+const deleteUser = async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.body.username });
-    if (!user) {
-      return res.status(401).json({
-        message: `Wrong Credential!`,
-      });
-    }
+    await User.findByIdAndDelete(req.params.id);
 
-    const hashedPassword = CryptoJS.AES.decrypt(
-      user.password,
-      process.env.PASSWORD_SECRET
-    );
-    const decPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
-
-    if (req.body.password !== decPassword) {
-      return res.status(401).json({
-        message: `Wrong Credential!`,
-      });
-    }
-
-    const { password, ...info } = user._doc;
-
-    const accessToken = jwt.sign(
-      { id: user._id, isAdmin: user.isAdmin },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
-
-    res.status(201).json({ ...info, accessToken });
+    res.status(200).json({
+      message: "User has been deleted successfully!",
+    });
   } catch (err) {
+    res.status(500).json({
+      message: `Internal server error: ${err}`,
+    });
+  }
+};
+
+// GET USER
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    const { password, ...info } = user._doc;
+    res.status(200).json(info);
+  } catch (err) {
+    res.status(500).json({
+      message: `Internal server error: ${err}`,
+    });
+  }
+};
+
+// GET USERS
+const getUsers = async (req, res) => {
+  const query = req.query.new;
+  try {
+    const users = query
+      ? await User.find(req.params.id)
+          .select("-password")
+          .sort({ _id: -1 })
+          .limit(5)
+      : await User.find().select("-password");
+
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({
+      message: `Internal server error: ${err}`,
+    });
+  }
+};
+
+// GET USER STAT
+
+const getUserStats = async (req, res) => {
+  const date = new Date();
+  const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
+
+  try {
+    const userStats = await User.aggregate([
+      { $match: { createdAt: { $gte: lastYear } } },
+      {
+        $project: {
+          month: { $month: "$createdAt" },
+        },
+      },
+      {
+        $group: {
+          _id: "$month",
+          total: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.status(200).json(userStats);
+  } catch (err) {
+    console.log(err);
     res.status(500).json({
       message: `Internal server error: ${err}`,
     });
@@ -74,6 +110,9 @@ const login = async (req, res) => {
 };
 
 module.exports = {
-  addUser,
-  login,
+  updateUser,
+  deleteUser,
+  getUser,
+  getUsers,
+  getUserStats,
 };

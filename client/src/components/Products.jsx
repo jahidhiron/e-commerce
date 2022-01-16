@@ -15,7 +15,6 @@ const Products = ({ category, filters, sort }) => {
   const [filterdProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
-    console.log("I am called");
     (async function () {
       try {
         const res = await axios.get(

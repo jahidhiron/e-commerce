@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { userRequest } from "../requestMethods";
 
 const Container = styled.div`
-  height: "100vh";
+  width: 100%;
+  height: calc(100vh - 70px);
   display: "flex";
-  flex-direction: "column";
   align-items: "center";
   justify-content: "center";
 `;
+
+const Content = styled.div``;
 
 const Button = styled.button`
   padding: 10;
@@ -23,7 +25,7 @@ const Button = styled.button`
 
 const Success = () => {
   const [orderId, setOrderId] = useState(null);
-  const currentUser = useSelector((state) => state.user);
+  const currentUser = useSelector((state) => state.user.currentUser);
   const { state } = useLocation();
   const product = state.product;
   const cart = state.cart;
@@ -50,11 +52,15 @@ const Success = () => {
 
   return (
     <Container>
-      {orderId
-        ? `Order has been created successfully. Your order number is ${orderId}`
-        : `Successfull. Your order is being prepared...`}
+      <Content>
+        {orderId
+          ? `Order has been created successfully. Your order ID number is  "${orderId}"`
+          : `Successfull. Your order is being prepared...`}
+      </Content>
 
-      <Button>Go to Homepage</Button>
+      <Link to="/">
+        <Button>Go to Homepage</Button>
+      </Link>
     </Container>
   );
 };

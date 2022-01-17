@@ -3,6 +3,7 @@ const Order = require("../models/Order");
 
 // CREATE
 const addOrder = async (req, res) => {
+  // console.log(req.body);
   const newOrder = new Order(req.body);
 
   try {
@@ -79,11 +80,11 @@ const getAllOrders = async (req, res) => {
 const getMonthlyIncome = async (req, res) => {
   const date = new Date();
   const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
-  const previousMonth = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
+  // const secondLast = new Date(new Date().setMonth(lastMonth.getMonth() - 1));
 
   try {
-    const income = await Order.aggregate([
-      { $match: { createdAt: { $gte: previousMonth } } },
+    const userStats = await Order.aggregate([
+      { $match: { createdAt: { $gte: lastMonth } } },
       {
         $project: {
           month: { $month: "$createdAt" },
@@ -97,8 +98,10 @@ const getMonthlyIncome = async (req, res) => {
         },
       },
     ]);
-    res.status(200).json(income);
+
+    res.status(200).json(userStats);
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       message: `Internal server error: ${err}`,
     });

@@ -5,6 +5,10 @@ import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { mobile } from "../responsive";
+import StripeCheckout from "react-stripe-checkout";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { userRequest } from "../requestMethods";
 
 const Container = styled.div``;
 
@@ -155,7 +159,29 @@ const Button = styled.button`
 `;
 
 const Cart = () => {
+  const [stripeToken, setStripeToken] = useState(null);
+  const navigate = useNavigate();
   const cart = useSelector((state) => state.cart);
+
+  const onToken = (token) => {
+    setStripeToken(token);
+  };
+
+  useEffect(() => {
+    stripeToken &&
+      (async function () {
+        try {
+          const res = await userRequest.post("/checkout/payment", {
+            tokenId: stripeToken.id,
+            amount: cart.total * 100,
+          });
+
+          navigate("/success", { state: { product: res.data, cart } });
+        } catch (err) {
+          console.log(`Error to payment: ${err}`);
+        }
+      })();
+  }, [stripeToken, cart, navigate]);
   return (
     <Container>
       <Navbar />
@@ -224,7 +250,18 @@ const Cart = () => {
               <SummaryItemText>Total</SummaryItemText>
               <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
-            <Button>CHECKOUT NOW</Button>
+            <StripeCheckout
+              name="E-ZONE"
+              image="https://contest2020.bestasiaapp.hk/wp-content/uploads/2019/07/ezone-logos.png"
+              billingAddress
+              shippingAddress
+              description={`Your current total is $${cart.total}`}
+              amount={cart.total * 100}
+              token={onToken}
+              stripeKey={process.env.REACT_APP_STRIPE_KEY}
+            >
+              <Button>CHECKOUT NOW</Button>
+            </StripeCheckout>
           </Summary>
         </Bottom>
       </Wrapper>

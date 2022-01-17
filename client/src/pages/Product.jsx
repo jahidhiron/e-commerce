@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { addProduct } from "../redux/cartRedux";
+import { pusblicRequest } from "../requestMethods";
 
 const Container = styled.div``;
 
@@ -135,7 +136,7 @@ const Product = () => {
   useEffect(() => {
     (async function () {
       try {
-        const res = await axios.get(`/products/${productId}`);
+        const res = await pusblicRequest.get(`/products/${productId}`);
         setProduct(res.data);
       } catch (err) {
         console.log(`Error to fetching single product: ${err}`);

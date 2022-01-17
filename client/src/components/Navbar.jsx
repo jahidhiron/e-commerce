@@ -83,7 +83,9 @@ const Navbar = () => {
             </SearchContainer>
           </Left>
           <Center>
-            <Logo>EZOON</Logo>
+            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+              <Logo>E-ZONE</Logo>
+            </Link>
           </Center>
           <Right>
             <MenuItem>Register</MenuItem>

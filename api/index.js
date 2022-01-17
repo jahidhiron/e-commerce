@@ -2,6 +2,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const cors = require("cors");
+
+dotenv.config();
 
 // internal imports
 const authRoute = require("./routes/auth");
@@ -13,9 +16,9 @@ const stripeRoute = require("./routes/stripe");
 
 const app = express();
 
-// configuration
-dotenv.config();
+// middleware
 app.use(express.json());
+app.use(cors());
 
 // connect database
 mongoose

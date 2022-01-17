@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Product from "./Product";
-import axios from "axios";
+import { pusblicRequest } from "../requestMethods";
 
 const Container = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const Products = ({ category, filters, sort }) => {
   useEffect(() => {
     (async function () {
       try {
-        const res = await axios.get(
+        const res = await pusblicRequest.get(
           category ? `/products?category=${category}` : "/products"
         );
         setProducts(res.data);

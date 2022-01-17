@@ -18,7 +18,6 @@ const addOrder = async (req, res) => {
 
 // UPDATE
 const updateOrder = async (req, res) => {
-  console.log("here");
   try {
     const updatedOrder = await Order.findByIdAndUpdate(
       req.params.id,
@@ -55,7 +54,6 @@ const deleteOrder = async (req, res) => {
 const getOrders = async (req, res) => {
   try {
     const orders = await Order.findOne({ userId: req.params.orderId });
-    console.log(orders);
 
     res.status(200).json(orders);
   } catch (err) {

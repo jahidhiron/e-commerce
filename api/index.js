@@ -1,9 +1,10 @@
 // external imports
 const express = require("express");
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const mongoose = require("mongoose");
 const cors = require("cors");
 
+// env configuration
 dotenv.config();
 
 // internal imports

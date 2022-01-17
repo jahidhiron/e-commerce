@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080/api/";
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 const TOKEN =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZTJjNjU5ZmRhNGViNDYzYTZjNmFkNiIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY0MjM5NDIwMiwiZXhwIjoxNjQyNDgwNjAyfQ.cJwsoHsH7Ny6ux8PDR6QzEcgkgPLg_b_VqkGSOJ0aQo";
 
-export const pusblicRequest = axios.create({
+export const publicRequest = axios.create({
   baseURL: BASE_URL,
 });
 

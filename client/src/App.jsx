@@ -9,7 +9,7 @@ import Cart from "./pages/Cart";
 import Success from "./pages/Success";
 
 function App() {
-  const user = true;
+  const user = false;
   return (
     <div>
       <Routes>

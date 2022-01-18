@@ -4,7 +4,7 @@ import { DeleteOutline } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getProducts } from "../../redux/apiCalls";
+import { getProducts, deleteProduct } from "../../redux/apiCalls";
 
 const ProductList = () => {
   const products = useSelector((state) => state.product.products);
@@ -15,7 +15,7 @@ const ProductList = () => {
   }, [dispatch]);
 
   const handleDelete = (id) => {
-    // setProduct(products.filter((item) => item.id !== id));
+    deleteProduct(id, dispatch);
   };
 
   const columns = [
